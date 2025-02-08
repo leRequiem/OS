@@ -9,7 +9,7 @@
 
 #define MAX_PROCESSES 8  // Максимальное количество процессов
 
-void copy_file(const char *src, const char *dst) {
+void copy_file(const char *src, const char *dst, int process_count) {
     int in_fd = open(src, O_RDONLY);
     if (in_fd == -1) {
         perror("Failed to open source file");
@@ -36,7 +36,7 @@ void copy_file(const char *src, const char *dst) {
         chmod(dst, st.st_mode);
     }
 
-    printf("PID %d copied %s -> %s (%ld bytes)\n", getpid(), src, dst, total_bytes);
+    printf("PID %d copied %s -> %s (%ld bytes, Active processes: %d)\n", getpid(), src, dst, total_bytes, process_count);
 
     close(in_fd);
     close(out_fd);
@@ -63,7 +63,7 @@ void sync_directories(const char *dir1, const char *dir2, int max_processes) {
             if (stat(dst_path, &st) == -1) {  // Файл отсутствует в Dir2
                 pid_t pid = fork();
                 if (pid == 0) {
-                    copy_file(src_path, dst_path);
+                    copy_file(src_path, dst_path, process_count + 1);
                 } else if (pid > 0) {
                     process_count++;
                     if (process_count >= max_processes) {
