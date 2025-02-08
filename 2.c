@@ -7,7 +7,7 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 
-#define MAX_PROCESSES 5  // Максимальное количество процессов (можно задать вводом)
+#define MAX_PROCESSES 8  // Максимальное количество процессов
 
 void copy_file(const char *src, const char *dst) {
     int in_fd = open(src, O_RDONLY);
